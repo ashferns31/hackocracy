@@ -1,6 +1,6 @@
-import 'dart:convert';
+//import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
+//import 'package:http/http.dart' as http;
 import 'package:firebase_database/firebase_database.dart';
 
 class FirstPage extends StatefulWidget {
@@ -39,7 +39,7 @@ class _FirstPageState extends State<FirstPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor:Color(0xFFBBDEFB), 
+        backgroundColor:Color(0xFF049560), 
         body:
             Container(
                 child: postsList.length == 0
@@ -67,7 +67,7 @@ Widget Doc(String image, String description,String address) {
   return Card(
     margin: EdgeInsets.all(8.0),
     elevation: 20.0,
-      color: Colors.white70,
+      color: Colors.white,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(15.0),
       ),
@@ -84,7 +84,7 @@ Widget Doc(String image, String description,String address) {
                 color: Colors.black,
                 ),
                 Text(
-                  address,
+                  address ?? 'Address',
                   style: TextStyle(
                   color: Colors.black,
                   fontWeight: FontWeight.w500,
@@ -105,7 +105,7 @@ Widget Doc(String image, String description,String address) {
               height: 10.0,
             ),
             Text(
-                description,
+                description ?? 'Description',
                 style: TextStyle(
                     color: Colors.black,
                     fontWeight: FontWeight.w500,
@@ -129,7 +129,6 @@ Widget Doc(String image, String description,String address) {
                 ),
                 SizedBox(
                   height: 20.0,
-                  
                   child: RaisedButton(
                   child: Text('Attend Drive'),
                   onPressed: addEvent(),

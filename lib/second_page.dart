@@ -1,7 +1,7 @@
-import 'dart:convert';
-import 'package:firebase_storage/firebase_storage.dart';
+//import 'dart:convert';
+//import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
+//import 'package:http/http.dart' as http;
 
 class MainScreen extends StatefulWidget {
   final String email;
@@ -17,7 +17,7 @@ class _MainScreenState extends State<MainScreen> {
   Widget build(BuildContext context) {
     print(widget.email);
     return Scaffold(
-        backgroundColor: Color(0xFF111328), 
+        backgroundColor: Color(0xFF013220), 
         body: ListView(
           children: <Widget>[
             SizedBox(height: 50.0),
@@ -25,16 +25,16 @@ class _MainScreenState extends State<MainScreen> {
               padding: EdgeInsets.only(left: 20.0),
               child: Row(
                 children: <Widget>[
-                  Text('CLEAN',
+                  Text('GREEN',
                       style: TextStyle(
-                          fontFamily: 'Montserrat',
+                          fontFamily: 'SyneMono',
                           color: Colors.white,
                           fontWeight: FontWeight.bold,
                           fontSize: 25.0)),
                   SizedBox(width: 10.0),
-                  Text('Goa',
+                  Text('Eye',
                       style: TextStyle(
-                          fontFamily: 'Montserrat',
+                          fontFamily: 'SyneMono',
                           color: Colors.white,
                           fontSize: 25.0))
                 ],
@@ -46,16 +46,16 @@ class _MainScreenState extends State<MainScreen> {
                   child: Row(
                     children: <Widget>[
                       Text(
-                        'Logged In As: ',
+                        'User: ',
                         style: TextStyle(
-                          color: Colors.grey,
+                          color: Colors.white60,
                           fontSize: 15.0,
                         ),
                       ),
                       Text(
                         widget.email ?? 'Current User',
                         style: TextStyle(
-                          color: Colors.grey,
+                          color: Colors.white60,
                           fontSize: 15.0,
                         ),
                       ),
@@ -68,7 +68,7 @@ class _MainScreenState extends State<MainScreen> {
               child: Container(
                 height: MediaQuery.of(context).size.height - 185.0,
                 decoration: BoxDecoration(
-                  color: Color(0xFFBBDEFB),
+                  color: Color(0xFF049560),
                   borderRadius:
                       BorderRadius.only(topRight: Radius.circular(75.0)),
                 ),
@@ -88,8 +88,8 @@ class _MainScreenState extends State<MainScreen> {
                                     topRight: Radius.circular(75.0),
                                     bottomLeft: Radius.circular(75.0)),
                               ),
-                              margin: EdgeInsets.all(9.0),
-                              color: Colors.blueAccent,
+                              margin: EdgeInsets.all(11.0),
+                              color: Color(0xFF013220),
                               child: Container(
                                 child: Column(
                                   children: <Widget>[
@@ -134,7 +134,7 @@ class _MainScreenState extends State<MainScreen> {
                         SizedBox(
                           height: 40.0,
                         ),
-                        Text("About Us",
+                        /* Text("About Us",
                             style: TextStyle(
                                 fontFamily: 'Montserrat',
                                 color: Color(0xFF111328),
@@ -265,7 +265,7 @@ class _MainScreenState extends State<MainScreen> {
                               ],
                             ),
                           ),
-                        ),
+                        ), */
                       ],
                     ),
                   ),
