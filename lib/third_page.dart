@@ -1,66 +1,72 @@
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'dart:io';
 import 'dart:convert';
-import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 import 'constants.dart';
+import 'package:firebase_database/firebase_database.dart';
+import 'package:geolocator/geolocator.dart';
+import 'second_page.dart';
 
 class ThirdPage extends StatefulWidget {
   final String email;
 
-  ThirdPage({Key key,this.email}) : super(key: key);
-  final String title = "Upload Image Demo";
-
+  ThirdPage({Key key, this.email}) : super(key: key);
   @override
   ThirdPageState createState() => ThirdPageState();
 }
 
 class ThirdPageState extends State<ThirdPage> {
-  static final String uploadEndPoint = 'http://ip/CleanGoa/add_user_pics.php';
   Future<File> file;
-  String status = '';
   String base64Image;
   File tmpFile;
-  String errMessage = 'Error Uploading Image';
   String caption;
+  String url;
+  String date;
+  String email='';
+
+  final Geolocator geolocator = Geolocator()..forceAndroidLocationManager;
+  Position _currentPosition;
+  String _currentAddress;
+
   chooseImage() {
     setState(() {
       file = ImagePicker.pickImage(source: ImageSource.camera);
     });
-    setStatus('');
   }
 
-  setStatus(String message) {
-    setState(() {
-      status = message;
-    });
+
+  startUpload() async {
+    final StorageReference postImageRef =
+        FirebaseStorage.instance.ref().child("Reports");
+    var timeKey = new DateTime.now();
+
+    final StorageUploadTask uploadTask =
+        postImageRef.child(timeKey.toString() + ".jpg").putFile(await file);
+
+    var ImageUrl = await (await uploadTask.onComplete).ref.getDownloadURL();
+
+    url = ImageUrl.toString();
+    print("Image Url: " + url);
+    goToHomePage();
+    saveToDatabase(url);
   }
 
-  startUpload() {
-    print('started upload');
-    setStatus('Uploading Image...');
-    if (null == tmpFile) {
-      setStatus(errMessage);
-      return;
-    }
-    String fileName = tmpFile.path.split('/').last;
-    upload(fileName);
+  goToHomePage() {
+    Navigator.push(context, MaterialPageRoute(builder: (context) {
+      return MainScreen(email);
+    }));
   }
 
-  upload(String fileName) {
-    print('upload method');
-    http.post(uploadEndPoint, body: {
-      "user_id": widget.email,
-      "image_name": fileName,
-      "image_pic": base64Image,
-      "caption": caption,
-    }).then((result) {
-      print('upload complete');
-      setStatus(result.statusCode == 200 ? result.body : errMessage);
-    }).catchError((error) {
-      print(error.runtimeType);
-      setStatus(error.toString());
-    });
+  saveToDatabase(url) {
+    DatabaseReference ref = FirebaseDatabase.instance.reference();
+    var data = {
+      "image": url,
+      "description": caption,
+      "date": date,
+      "address": _currentAddress,
+    };
+    ref.child("Posts").push().set(data);
   }
 
   Widget showImage() {
@@ -93,10 +99,42 @@ class ThirdPageState extends State<ThirdPage> {
     );
   }
 
+  _getCurrentLocation() {
+    geolocator
+        .getCurrentPosition(desiredAccuracy: LocationAccuracy.best)
+        .then((Position position) {
+      setState(() {
+        _currentPosition = position;
+      });
+
+      _getAddressFromLatLng();
+    }).catchError((e) {
+      print(e);
+    });
+  }
+
+  _getAddressFromLatLng() async {
+    try {
+      List<Placemark> p = await geolocator.placemarkFromCoordinates(
+          _currentPosition.latitude, _currentPosition.longitude);
+
+      Placemark place = p[0];
+
+      setState(() {
+        _currentAddress =
+            "${place.locality}, ${place.postalCode}, ${place.country}";
+        print(_currentAddress);
+      });
+    } catch (e) {
+      print(e);
+    }
+  }
+
   @override
   void initState() {
     super.initState();
     chooseImage();
+    _getCurrentLocation();
   }
 
   @override
@@ -117,31 +155,40 @@ class ThirdPageState extends State<ThirdPage> {
             ),
             TextField(
                 textAlign: TextAlign.center,
-                style: TextStyle(color: Colors.black54),
+                style: TextStyle(color: Colors.black),
                 onChanged: (value) {
                   caption = value;
                 },
-                decoration: ktextfield.copyWith(hintText: 'ENTER YOUR CAPTION')),
-            OutlineButton(
-              borderSide: BorderSide(),
-              onPressed: startUpload,
-              child: Text('Upload Image'),
-            ),
+                decoration: ktextfield.copyWith(
+                    hintText: 'Enter Description Of Event')),
             SizedBox(
-              height: 10.0,
+              height: 20.0,
             ),
-            Text(
-              status,
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                color: Colors.green,
-                fontWeight: FontWeight.w500,
-                fontSize: 10.0,
-              ),
-            ),
-            SizedBox(
-              height: 10.0,
-            ),
+            TextField(
+                textAlign: TextAlign.center,
+                style: TextStyle(color: Colors.black),
+                onChanged: (value) {
+                  date = value;
+                },
+                decoration: ktextfield.copyWith(hintText: 'Enter Drive Date')),
+            ButtonBar(
+              alignment: MainAxisAlignment.center,
+              children: <Widget>[
+                RaisedButton(
+                  child: Text('Create Event'),
+                  onPressed: startUpload,
+                  color: Color(0xFF007ACC),
+                ),
+                SizedBox(
+                  width: 20.0,
+                ),
+                RaisedButton(
+                  onPressed: null,
+                  child: Text('Report Issue'),
+                  color: Color(0xFF007ACC),
+                )
+              ],
+            ), 
           ],
         ),
       ),

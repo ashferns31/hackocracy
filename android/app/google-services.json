@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "1096681062129",
+    "firebase_url": "https://hackocracy.firebaseio.com",
+    "project_id": "hackocracy",
+    "storage_bucket": "hackocracy.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1096681062129:android:b505ecc719833f30417350",
+        "android_client_info": {
+          "package_name": "com.example.hackocracy"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1096681062129-ihouapg1vni3vqejfva5f7jq2v6n6ph3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAe5mrKnJYuuB59wpHnJw5UR0ExuflNQyY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1096681062129-ihouapg1vni3vqejfva5f7jq2v6n6ph3.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -19,7 +19,11 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   bool showspinner = false;
   String email;
   String password;
+
+  final _formKey=GlobalKey<FormState>();
   
+
+
   void addData() {
     var url = "http://ip/CleanGoa/addData.php";
     http.post(url, body: {
