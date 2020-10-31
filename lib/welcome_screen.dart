@@ -24,21 +24,30 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
-                Text(
-                  'CLEAN GOA',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 39.0,
-                    fontWeight: FontWeight.w900,
-                  ),
+                Container(
+                  child: Image.asset('images/nature.png'),
+                  height: 150.0,
                 ),
               ],
             ),
             SizedBox(
               height: 48.0,
             ),
+            Text(
+              'Green Eye',
+              style: TextStyle(
+                fontFamily: 'SyneMono',
+                color: Colors.white,
+                fontSize: 45.0,
+                fontWeight: FontWeight.w900,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            SizedBox(
+              height: 10.0,
+            ),
             RoundedButton(
-              title: 'LOGIN',
+              title: 'Login',
               colur: Color(0xFF1CE3B1),
               onPressed: () {
                 Navigator.push(context, MaterialPageRoute(builder: (context) {
@@ -47,7 +56,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
               },
             ),
             RoundedButton(
-              title: 'REGISTER',
+              title: 'Register',
               colur: Colors.lightBlueAccent,
               onPressed: () {
                 Navigator.push(context, MaterialPageRoute(builder: (context) {

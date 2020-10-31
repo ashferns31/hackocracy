@@ -1,14 +1,14 @@
 //import 'package:chat_app_two/screens/chat_screen.dart';
 import 'dart:convert';
-
 import 'package:hackocracy/main.dart';
 import 'package:flutter/material.dart';
 import 'package:hackocracy/constants.dart';
 import 'package:hackocracy/roundedbutton.dart';
-//import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 //import 'chat_screen.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
-import 'package:http/http.dart' as http;
+//import 'package:http/http.dart' as http;
+import 'main.dart';
 
 class LoginScreen extends StatefulWidget {
   static const id = 'login';
@@ -20,9 +20,10 @@ class _LoginScreenState extends State<LoginScreen> {
   bool showspinner = false;
   String email;
   String password;
+  final _auth = FirebaseAuth.instance;
 
-  var url = "http://ip/CleanGoa/getUser.php";
-
+//  var url = "http://ip/CleanGoa/getUser.php";
+/* 
   Future<List> getdata() async {
     final responce = await http.post(url, body: {
       'email': email,
@@ -35,7 +36,7 @@ class _LoginScreenState extends State<LoginScreen> {
     });
 
     return datauser;
-  }
+  } */
 
   @override
   Widget build(BuildContext context) {
@@ -85,19 +86,35 @@ class _LoginScreenState extends State<LoginScreen> {
                 height: 24.0,
               ),
               RoundedButton(
-                title: 'LOG IN',
+                title: 'LOGIN',
                 colur: Color(0xFF1CE3B1),
                 onPressed: () async {
                   setState(() {
                     showspinner = true;
                   });
+                  /* 
                   getdata();
                   Navigator.push(context, MaterialPageRoute(builder: (context) {
                     return BottomNavBar(
                       email: email,
                     );
                   }));
-                  print(email);
+                  print(email); */
+                  try {
+                    final user = await _auth.signInWithEmailAndPassword(
+                        email: email, password: password);
+                    if (user != null) {
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (context) {
+                        return BottomNavBar();
+                      }));
+                    }
+                    setState(() {
+                      showspinner = false;
+                    });
+                  } catch (e) {
+                    print(e);
+                  }
                 },
               ),
             ],

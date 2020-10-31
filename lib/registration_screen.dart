@@ -3,10 +3,11 @@ import 'package:hackocracy/main.dart';
 import 'package:flutter/material.dart';
 import 'package:hackocracy/constants.dart';
 import 'package:hackocracy/roundedbutton.dart';
-/* import 'package:firebase_auth/firebase_auth.dart';
-import 'chat_screen.dart';*/
+import 'package:firebase_auth/firebase_auth.dart';
+//import 'chat_screen.dart';*/
 import 'package:modal_progress_hud/modal_progress_hud.dart';
-import 'package:http/http.dart' as http;
+//import 'package:http/http.dart' as http;
+import 'package:hackocracy/login_screen.dart';
 
 class RegistrationScreen extends StatefulWidget {
   static const id = 'registration';
@@ -15,14 +16,14 @@ class RegistrationScreen extends StatefulWidget {
 }
 
 class _RegistrationScreenState extends State<RegistrationScreen> {
-  //final _auth = FirebaseAuth.instance;
+  final _auth = FirebaseAuth.instance;
   bool showspinner = false;
   String email;
   String password;
 
-  final _formKey=GlobalKey<FormState>();
-  
+  //final _formKey=GlobalKey<FormState>();
 
+/* 
 
   void addData() {
     var url = "http://ip/CleanGoa/addData.php";
@@ -30,7 +31,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
       "email": email,
       "password": password,
     });
-  }
+  } */
 
   @override
   Widget build(BuildContext context) {
@@ -77,6 +78,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                 height: 8.0,
               ),
               TextField(
+                  obscureText: true,
                   style: TextStyle(color: Colors.white),
                   textAlign: TextAlign.center,
                   onChanged: (value) {
@@ -94,25 +96,29 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                   setState(() {
                     showspinner = true;
                   });
+                  /* 
                   addData();
                   Navigator.push(context, MaterialPageRoute(builder: (context) {
                     return BottomNavBar(
                       email: email,
                      // pass: password,
                     );
-                  }));
-                  /*  try {
+                  })); */
+                  try {
                     final newuser = await _auth.createUserWithEmailAndPassword(
                         email: email, password: password);
                     if (newuser != null) {
-                      Navigator.pushNamed(context, ChatScreen.id);
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (context) {
+                        return LoginScreen();
+                      }));
                     }
                     setState(() {
                       showspinner = false;
                     });
                   } catch (e) {
                     print(e);
-                  } */
+                  }
                 },
               ),
             ],
