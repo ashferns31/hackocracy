@@ -1,7 +1,7 @@
-import 'package:hackocracy/login_screen.dart';
-import 'package:hackocracy/registration_screen.dart';
+import 'package:hackocracy/screens/login_screen.dart';
+import 'package:hackocracy/screens/registration_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:hackocracy/roundedbutton.dart';
+import 'package:hackocracy/components/roundedButton.dart';
 
 class WelcomeScreen extends StatefulWidget {
   static const String id = 'welcome_string';
@@ -13,7 +13,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFF353F45),
+      backgroundColor: Color(0xFF013220),
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: 24.0),
         child: Column(
@@ -48,7 +48,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
             ),
             RoundedButton(
               title: 'Login',
-              colur: Color(0xFF1CE3B1),
+              colur: Color(0xFF049560),
               onPressed: () {
                 Navigator.push(context, MaterialPageRoute(builder: (context) {
                   return LoginScreen();
@@ -57,7 +57,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
             ),
             RoundedButton(
               title: 'Register',
-              colur: Colors.lightBlueAccent,
+              colur: Colors.blueAccent,
               onPressed: () {
                 Navigator.push(context, MaterialPageRoute(builder: (context) {
                   return RegistrationScreen();

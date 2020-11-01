@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+//Rounded Button Widget to use in any screen
 
 class RoundedButton extends StatelessWidget {
   RoundedButton({this.colur, this.title, this.onPressed});
