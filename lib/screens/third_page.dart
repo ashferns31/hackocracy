@@ -32,8 +32,8 @@ class ThirdPageState extends State<ThirdPage> {
 //geolocator to find the current user location and add it automatically to the event that the user posts
 
   final Geolocator geolocator = Geolocator()..forceAndroidLocationManager;
-  Position _currentPosition;
-  String _currentAddress;
+  Position currentPosition;
+  String currentAddress;
 
 //method to call the system camera to click a photo
 
@@ -85,7 +85,7 @@ class ThirdPageState extends State<ThirdPage> {
       "image": url,
       "description": caption,
       "date": date,
-      "address": _currentAddress,
+      "address": currentAddress,
     };
     ref.child("Posts").push().set(data);
   }
@@ -124,15 +124,14 @@ class ThirdPageState extends State<ThirdPage> {
 
 //method used to get the current location of user using the geolocator plugin
 
-  _getCurrentLocation() {
+  getCurrentLocation() {
     geolocator
         .getCurrentPosition(desiredAccuracy: LocationAccuracy.best)
         .then((Position position) {
       setState(() {
-        _currentPosition = position;
+        currentPosition = position;
       });
-
-      _getAddressFromLatLng();
+      getAddressFromLatLng();
     }).catchError((e) {
       print(e);
     });
@@ -140,20 +139,18 @@ class ThirdPageState extends State<ThirdPage> {
 
 //method to get the exact address from the latitude and longitude
 
-  _getAddressFromLatLng() async {
+  getAddressFromLatLng() async {
     try {
       List<Placemark> p = await geolocator.placemarkFromCoordinates(
-          _currentPosition.latitude, _currentPosition.longitude);
-
+          currentPosition.latitude, currentPosition.longitude);
       Placemark place = p[0];
-
       setState(() {
-        _currentAddress =
-            "${place.locality}, ${place.postalCode}, ${place.country}";
-        print(_currentAddress);
+        currentAddress =
+            "${place.locality}, ${place.postalCode} Lat: ${currentPosition.latitude} Long: ${currentPosition.longitude}";
+        print(currentAddress);
       });
     } catch (e) {
-      print(e);
+      print(e); 
     }
   }
 
@@ -161,7 +158,7 @@ class ThirdPageState extends State<ThirdPage> {
 
   loadModel() async {
     await Tflite.loadModel(
-      model: "assets/model_unquant.tflite",
+      model: "assets/classifier.tflite",
       labels: "assets/labels.txt",
       numThreads: 1,
     );
@@ -178,14 +175,12 @@ class ThirdPageState extends State<ThirdPage> {
         threshold: 0.2,
         asynch: true);
     setState(() {
-      //_loading = false;
       _outputs = output;
       print(_outputs[0]['confidence']);
       if (_outputs[0]['confidence'] > 0.90) {
         print('entered if loop');
         startUploadToReport();
       } else {
-        //dispose();
         goToHomePage();
       }
     });
@@ -207,7 +202,7 @@ class ThirdPageState extends State<ThirdPage> {
   void initState() {
     super.initState();
     chooseImage();
-    _getCurrentLocation();
+    getCurrentLocation();
   }
 
   @override

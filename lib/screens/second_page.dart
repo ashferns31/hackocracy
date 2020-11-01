@@ -1,6 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:hackocracy/components/roundedButton.dart';
+import 'package:hackocracy/screens/awarenessPage.dart';
+
 
 class MainScreen extends StatefulWidget {
   final String email;
@@ -13,24 +16,13 @@ class MainScreen extends StatefulWidget {
 class _MainScreenState extends State<MainScreen> {
   String emaile;
 
-final FirebaseAuth _auth = FirebaseAuth.instance;
-/* 
-getCurrentUser() async {
-    final User user = _auth.currentUser;
-    final uid = user.uid;
-    print(uid);
+  final FirebaseAuth _auth = FirebaseAuth.instance;
 
-  String result = (await FirebaseDatabase.instance.reference().child("Users").child(uid).once()).value;
-  print(result);
-  return result;
-} */
-
-@override
+  @override
   void initState() {
-    // TODO: implement initState
     super.initState();
-    //getCurrentUser();
   }
+
   @override
   Widget build(BuildContext context) {
     print(widget.email);
@@ -87,7 +79,7 @@ getCurrentUser() async {
               child: Container(
                 height: MediaQuery.of(context).size.height - 185.0,
                 decoration: BoxDecoration(
-                  color: Color(0xFF049560), 
+                  color: Color(0xFF049560),
                   borderRadius:
                       BorderRadius.only(topRight: Radius.circular(75.0)),
                 ),
@@ -153,6 +145,16 @@ getCurrentUser() async {
                         SizedBox(
                           height: 40.0,
                         ),
+                        RoundedButton(
+                          title: 'Statistics',
+                          colur: Colors.blueAccent,
+                          onPressed: () {
+                            Navigator.push(context,
+                                MaterialPageRoute(builder: (context) {
+                              return AwarenessPage();
+                            }));
+                          },
+                        )
                       ],
                     ),
                   ),
