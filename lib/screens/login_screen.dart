@@ -1,42 +1,28 @@
-//import 'package:chat_app_two/screens/chat_screen.dart';
 import 'package:hackocracy/main.dart';
 import 'package:flutter/material.dart';
-import 'package:hackocracy/constants.dart';
-import 'package:hackocracy/roundedbutton.dart';
+import 'package:hackocracy/components/constants.dart';
+//import 'package:hackocracy/roundedbutton.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-//import 'chat_screen.dart';*/
 import 'package:modal_progress_hud/modal_progress_hud.dart';
-//import 'package:http/http.dart' as http;
-import 'package:hackocracy/login_screen.dart';
+import '../main.dart';
+import 'package:hackocracy/components/roundedButton.dart';
 
-class RegistrationScreen extends StatefulWidget {
-  static const id = 'registration';
+class LoginScreen extends StatefulWidget {
+  static const id = 'login';
   @override
-  _RegistrationScreenState createState() => _RegistrationScreenState();
+  _LoginScreenState createState() => _LoginScreenState();
 }
 
-class _RegistrationScreenState extends State<RegistrationScreen> {
-  final _auth = FirebaseAuth.instance;
+class _LoginScreenState extends State<LoginScreen> {
   bool showspinner = false;
   String email;
   String password;
-
-  //final _formKey=GlobalKey<FormState>();
-
-/* 
-
-  void addData() {
-    var url = "http://ip/CleanGoa/addData.php";
-    http.post(url, body: {
-      "email": email,
-      "password": password,
-    });
-  } */
+  final _auth = FirebaseAuth.instance;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFF353F45),
+      backgroundColor: Color(0xFF013220),
       body: ModalProgressHUD(
         inAsyncCall: showspinner,
         child: Padding(
@@ -45,19 +31,11 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
-              /* Flexible(
-                child: Hero(
-                  tag: 'logo',
-                  child: Container(
-                    height: 100.0,
-                    child: Image.asset('images/whitelogo.png'),
-                  ),
-                ),
-              ), */
               Text(
-                'REGISTRATION',
+                'LOGIN',
                 textAlign: TextAlign.center,
                 style: TextStyle(
+                  fontFamily: 'SyneMono',
                   color: Colors.white,
                   fontSize: 39.0,
                   fontWeight: FontWeight.w900,
@@ -67,50 +45,46 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                 height: 48.0,
               ),
               TextField(
-                style: TextStyle(color: Colors.white),
-                textAlign: TextAlign.center,
-                onChanged: (value) {
-                  email = value;
-                },
-                decoration: ktextfield.copyWith(hintText: 'ENTER YOUR EMAIL'),
-              ),
+                  textAlign: TextAlign.center,
+                  style: TextStyle(color: Colors.white),
+                  onChanged: (value) {
+                    email = value;
+                  },
+                  decoration:
+                      constant_textfield.copyWith(hintText: 'ENTER YOUR EMAIL')),
               SizedBox(
                 height: 8.0,
               ),
               TextField(
                   obscureText: true,
-                  style: TextStyle(color: Colors.white),
                   textAlign: TextAlign.center,
+                  style: TextStyle(color: Colors.white),
                   onChanged: (value) {
                     password = value;
                   },
                   decoration:
-                      ktextfield.copyWith(hintText: 'ENTER YOUR PASSWORD')),
+                      constant_textfield.copyWith(hintText: 'ENTER YOUR PASSWORD')),
               SizedBox(
                 height: 24.0,
               ),
               RoundedButton(
-                title: 'REGISTER',
-                colur: Colors.lightBlueAccent,
+                title: 'LOGIN',
+                colur: Color(0xFF049560),
+                //on pressed function is called to allow user to log in using firebase auth
                 onPressed: () async {
                   setState(() {
                     showspinner = true;
                   });
-                  /* 
-                  addData();
-                  Navigator.push(context, MaterialPageRoute(builder: (context) {
-                    return BottomNavBar(
-                      email: email,
-                     // pass: password,
-                    );
-                  })); */
                   try {
-                    final newuser = await _auth.createUserWithEmailAndPassword(
+                    final user = await _auth.signInWithEmailAndPassword(
                         email: email, password: password);
-                    if (newuser != null) {
+                    if (user != null) {
                       Navigator.push(context,
                           MaterialPageRoute(builder: (context) {
-                        return LoginScreen();
+                        return BottomNavBar(
+                          email: email,
+
+                        );
                       }));
                     }
                     setState(() {

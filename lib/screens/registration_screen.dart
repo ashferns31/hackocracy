@@ -1,47 +1,30 @@
-//import 'package:chat_app_two/screens/chat_screen.dart';
-import 'dart:convert';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:hackocracy/main.dart';
 import 'package:flutter/material.dart';
-import 'package:hackocracy/constants.dart';
-import 'package:hackocracy/roundedbutton.dart';
+import 'package:hackocracy/components/constants.dart';
+import 'package:hackocracy/components/roundedButton.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-//import 'chat_screen.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
-//import 'package:http/http.dart' as http;
-import 'main.dart';
+import 'package:hackocracy/screens/login_screen.dart';
 
-class LoginScreen extends StatefulWidget {
-  static const id = 'login';
+class RegistrationScreen extends StatefulWidget {
+  static const id = 'registration';
   @override
-  _LoginScreenState createState() => _LoginScreenState();
+  _RegistrationScreenState createState() => _RegistrationScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _RegistrationScreenState extends State<RegistrationScreen> {
+  final _auth = FirebaseAuth.instance;
   bool showspinner = false;
   String email;
   String password;
-  final _auth = FirebaseAuth.instance;
-
-//  var url = "http://ip/CleanGoa/getUser.php";
-/* 
-  Future<List> getdata() async {
-    final responce = await http.post(url, body: {
-      'email': email,
-      'password': password,
-    });
-
-    var datauser = jsonDecode(responce.body);
-    setState(() {
-      email = datauser[0]['email'];
-    });
-
-    return datauser;
-  } */
+  int points=0;
+  double ranking=0.0;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFF353F45),
+      backgroundColor: Color(0xFF013220),
       body: ModalProgressHUD(
         inAsyncCall: showspinner,
         child: Padding(
@@ -51,9 +34,10 @@ class _LoginScreenState extends State<LoginScreen> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
               Text(
-                'LOGIN',
+                'REGISTRATION',
                 textAlign: TextAlign.center,
                 style: TextStyle(
+                  fontFamily: 'SyneMono',
                   color: Colors.white,
                   fontSize: 39.0,
                   fontWeight: FontWeight.w900,
@@ -63,50 +47,51 @@ class _LoginScreenState extends State<LoginScreen> {
                 height: 48.0,
               ),
               TextField(
-                  textAlign: TextAlign.center,
-                  style: TextStyle(color: Colors.white),
-                  onChanged: (value) {
-                    email = value;
-                  },
-                  decoration:
-                      ktextfield.copyWith(hintText: 'ENTER YOUR EMAIL')),
+                style: TextStyle(color: Colors.white),
+                textAlign: TextAlign.center,
+                onChanged: (value) {
+                  email = value;
+                },
+                decoration: constant_textfield.copyWith(hintText: 'ENTER YOUR EMAIL'),
+              ),
               SizedBox(
                 height: 8.0,
               ),
               TextField(
                   obscureText: true,
-                  textAlign: TextAlign.center,
                   style: TextStyle(color: Colors.white),
+                  textAlign: TextAlign.center,
                   onChanged: (value) {
                     password = value;
                   },
                   decoration:
-                      ktextfield.copyWith(hintText: 'ENTER YOUR PASSWORD')),
+                      constant_textfield.copyWith(hintText: 'ENTER YOUR PASSWORD')),
               SizedBox(
                 height: 24.0,
               ),
               RoundedButton(
-                title: 'LOGIN',
-                colur: Color(0xFF1CE3B1),
+                title: 'REGISTER',
+                colur: Colors.blueAccent,
                 onPressed: () async {
                   setState(() {
                     showspinner = true;
                   });
-                  /* 
-                  getdata();
-                  Navigator.push(context, MaterialPageRoute(builder: (context) {
-                    return BottomNavBar(
-                      email: email,
-                    );
-                  }));
-                  print(email); */
                   try {
-                    final user = await _auth.signInWithEmailAndPassword(
+                    final newuser = await _auth.createUserWithEmailAndPassword(
                         email: email, password: password);
-                    if (user != null) {
+                    if (newuser != null) {
+                      DatabaseReference ref =
+                          FirebaseDatabase.instance.reference();
+                      var data = {
+                        "email": email,
+                        "points": points,
+                        "ranking": ranking,
+                        "password": password
+                      };
+                      ref.child("Users").push().set(data);
                       Navigator.push(context,
                           MaterialPageRoute(builder: (context) {
-                        return BottomNavBar();
+                        return LoginScreen();
                       }));
                     }
                     setState(() {

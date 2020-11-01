@@ -1,29 +1,21 @@
-//import 'package:hackocracy/login_screen.dart';
-//import 'package:hackocracy/welcome_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:hackocracy/welcome_screen.dart';
-//import 'package:curved_navigation_bar/curved_navigation_bar.dart';
-//import 'package:http/http.dart';
-import 'first_page.dart';
-import 'second_page.dart';
-import 'third_page.dart';
-
-/* void main() => runApp(
-    MaterialApp(debugShowCheckedModeBanner: false, home: WelcomeScreen()));
- */
+import 'package:hackocracy/screens/welcome_screen.dart';
+import 'screens/first_page.dart';
+import 'screens/second_page.dart';
+import 'screens/third_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  runApp(MaterialApp(debugShowCheckedModeBanner: false, home: BottomNavBar()));
+  runApp(MaterialApp(debugShowCheckedModeBanner: false, home: WelcomeScreen()));
 }
-
 
 class BottomNavBar extends StatefulWidget {
   final String email;
+  final int points;
   static const id='navbar';
-  BottomNavBar({this.email});
+  BottomNavBar({this.email,this.points});
   @override
   _BottomNavBarState createState() => _BottomNavBarState();
 }
@@ -54,7 +46,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
     return Scaffold(
         body: PageView(
           children: [
-            MainScreen(widget.email),
+            MainScreen(widget.email,widget.points),
             FirstPage(),
             ThirdPage(email: widget.email),
           ],

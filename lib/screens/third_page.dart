@@ -3,15 +3,16 @@ import 'package:flutter/material.dart';
 import 'dart:io';
 import 'dart:convert';
 import 'package:image_picker/image_picker.dart';
-import 'constants.dart';
+import '../components/constants.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:geolocator/geolocator.dart';
 import 'second_page.dart';
 
 class ThirdPage extends StatefulWidget {
   final String email;
+  final int points;
 
-  ThirdPage({Key key, this.email}) : super(key: key);
+  ThirdPage({Key key, this.email,this.points}) : super(key: key);
   @override
   ThirdPageState createState() => ThirdPageState();
 }
@@ -24,10 +25,16 @@ class ThirdPageState extends State<ThirdPage> {
   String url;
   String date;
   String email='';
+  int points;
+
+
+//geolocator to find the current user location and add it automatically to the event that the user posts
 
   final Geolocator geolocator = Geolocator()..forceAndroidLocationManager;
   Position _currentPosition;
   String _currentAddress;
+
+//method to call the system camera to click a photo
 
   chooseImage() {
     setState(() {
@@ -35,6 +42,7 @@ class ThirdPageState extends State<ThirdPage> {
     });
   }
 
+//method to begin uploading the picture to the firestore so that it shows up to all the users using this app
 
   startUpload() async {
     final StorageReference postImageRef =
@@ -52,11 +60,15 @@ class ThirdPageState extends State<ThirdPage> {
     saveToDatabase(url);
   }
 
+//method to go to home page after uploading the picture to firestore
+
   goToHomePage() {
     Navigator.push(context, MaterialPageRoute(builder: (context) {
-      return MainScreen(email);
+      return MainScreen(email,points);
     }));
   }
+
+//method to save data to the database
 
   saveToDatabase(url) {
     DatabaseReference ref = FirebaseDatabase.instance.reference();
@@ -69,13 +81,15 @@ class ThirdPageState extends State<ThirdPage> {
     ref.child("Posts").push().set(data);
   }
 
+//widget that is used to show the preview of image before uploading
+
   Widget showImage() {
     return FutureBuilder<File>(
       future: file,
       builder: (BuildContext context, AsyncSnapshot<File> snapshot) {
         if (snapshot.connectionState == ConnectionState.done &&
             null != snapshot.data) {
-          print('inside showimage');
+          //print('inside showimage');
           tmpFile = snapshot.data;
           base64Image = base64Encode(snapshot.data.readAsBytesSync());
           return Flexible(
@@ -99,6 +113,8 @@ class ThirdPageState extends State<ThirdPage> {
     );
   }
 
+//method used to get the current location of user using the geolocator plugin
+
   _getCurrentLocation() {
     geolocator
         .getCurrentPosition(desiredAccuracy: LocationAccuracy.best)
@@ -112,6 +128,8 @@ class ThirdPageState extends State<ThirdPage> {
       print(e);
     });
   }
+
+//method to get the exact address from the latitude and longitude
 
   _getAddressFromLatLng() async {
     try {
@@ -130,6 +148,7 @@ class ThirdPageState extends State<ThirdPage> {
     }
   }
 
+
   @override
   void initState() {
     super.initState();
@@ -137,10 +156,13 @@ class ThirdPageState extends State<ThirdPage> {
     _getCurrentLocation();
   }
 
+
+
   @override
   Widget build(BuildContext context) {
-    print('indeide buider\n');
+    //print('indeide buider\n');
     return Scaffold(
+      backgroundColor: Color(0xFF049560),
       body: Container(
         padding: EdgeInsets.all(30.0),
         child: Column(
@@ -159,7 +181,7 @@ class ThirdPageState extends State<ThirdPage> {
                 onChanged: (value) {
                   caption = value;
                 },
-                decoration: ktextfield.copyWith(
+                decoration: constant_textfield.copyWith(
                     hintText: 'Enter Description Of Event')),
             SizedBox(
               height: 20.0,
@@ -170,7 +192,7 @@ class ThirdPageState extends State<ThirdPage> {
                 onChanged: (value) {
                   date = value;
                 },
-                decoration: ktextfield.copyWith(hintText: 'Enter Drive Date')),
+                decoration: constant_textfield.copyWith(hintText: 'Enter Drive Date')),
             ButtonBar(
               alignment: MainAxisAlignment.center,
               children: <Widget>[
