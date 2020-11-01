@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'dart:io';
 import 'dart:convert';
 import 'package:image_picker/image_picker.dart';
+import 'package:tflite/tflite.dart';
 import '../components/constants.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:geolocator/geolocator.dart';
@@ -12,7 +13,7 @@ class ThirdPage extends StatefulWidget {
   final String email;
   final int points;
 
-  ThirdPage({Key key, this.email,this.points}) : super(key: key);
+  ThirdPage({Key key, this.email, this.points}) : super(key: key);
   @override
   ThirdPageState createState() => ThirdPageState();
 }
@@ -24,9 +25,9 @@ class ThirdPageState extends State<ThirdPage> {
   String caption;
   String url;
   String date;
-  String email='';
+  String email = '';
   int points;
-
+  List _outputs;
 
 //geolocator to find the current user location and add it automatically to the event that the user posts
 
@@ -48,23 +49,31 @@ class ThirdPageState extends State<ThirdPage> {
     final StorageReference postImageRef =
         FirebaseStorage.instance.ref().child("Reports");
     var timeKey = new DateTime.now();
-
     final StorageUploadTask uploadTask =
         postImageRef.child(timeKey.toString() + ".jpg").putFile(await file);
-
     var ImageUrl = await (await uploadTask.onComplete).ref.getDownloadURL();
-
     url = ImageUrl.toString();
     print("Image Url: " + url);
     goToHomePage();
     saveToDatabase(url);
   }
 
+//Upload to server the offences
+
+  startUploadToReport() async {
+    final StorageReference postImageRef =
+        FirebaseStorage.instance.ref().child("Offences");
+    var timeKey = new DateTime.now();
+    final StorageUploadTask uploadTask =
+        postImageRef.child(timeKey.toString() + ".jpg").putFile(await file);
+    goToHomePage();
+  }
+
 //method to go to home page after uploading the picture to firestore
 
   goToHomePage() {
     Navigator.push(context, MaterialPageRoute(builder: (context) {
-      return MainScreen(email,points);
+      return MainScreen(email, points);
     }));
   }
 
@@ -148,6 +157,51 @@ class ThirdPageState extends State<ThirdPage> {
     }
   }
 
+//method to load model
+
+  loadModel() async {
+    await Tflite.loadModel(
+      model: "assets/model_unquant.tflite",
+      labels: "assets/labels.txt",
+      numThreads: 1,
+    );
+  }
+
+//method to clafiffy image
+
+  classifyImage(File image) async {
+    var output = await Tflite.runModelOnImage(
+        path: image.path,
+        imageMean: 0.0,
+        imageStd: 255.0,
+        numResults: 2,
+        threshold: 0.2,
+        asynch: true);
+    setState(() {
+      //_loading = false;
+      _outputs = output;
+      print(_outputs[0]['confidence']);
+      if (_outputs[0]['confidence'] > 0.90) {
+        print('entered if loop');
+        startUploadToReport();
+      } else {
+        //dispose();
+        goToHomePage();
+      }
+    });
+  }
+
+  //method to run ml code to classify the image clicked and upload to database accordingly
+
+  runMlCode() {
+    loadModel().then((value) {});
+    classifyImage(tmpFile);
+  }
+
+  void dispose() {
+    Tflite.close();
+    super.dispose();
+  }
 
   @override
   void initState() {
@@ -155,8 +209,6 @@ class ThirdPageState extends State<ThirdPage> {
     chooseImage();
     _getCurrentLocation();
   }
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -192,7 +244,8 @@ class ThirdPageState extends State<ThirdPage> {
                 onChanged: (value) {
                   date = value;
                 },
-                decoration: constant_textfield.copyWith(hintText: 'Enter Drive Date')),
+                decoration:
+                    constant_textfield.copyWith(hintText: 'Enter Drive Date')),
             ButtonBar(
               alignment: MainAxisAlignment.center,
               children: <Widget>[
@@ -205,12 +258,12 @@ class ThirdPageState extends State<ThirdPage> {
                   width: 20.0,
                 ),
                 RaisedButton(
-                  onPressed: null,
+                  onPressed: runMlCode,
                   child: Text('Report Issue'),
                   color: Color(0xFF007ACC),
                 )
               ],
-            ), 
+            ),
           ],
         ),
       ),
